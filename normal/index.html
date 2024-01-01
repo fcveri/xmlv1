@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>e-Arşiv Fatura Listeleme</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S0Q05PFCWL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-S0Q05PFCWL');
+</script>
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4-4.1.1/jq-3.3.1/jszip-2.5.0/dt-1.10.20/af-2.3.4/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/fc-3.3.0/sc-2.0.1/sl-1.3.1/datatables.min.css" /> -->
+    <!-- <script type="text/javascript" src="https://cdn.datatables.net/v/bs4-4.1.1/jq-3.3.1/jszip-2.5.0/dt-1.10.20/af-2.3.4/b-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/sl-1.3.1/datatables.min.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4-4.1.1/jq-3.3.1/jszip-2.5.0/dt-1.10.20/af-2.3.4/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/fc-3.3.0/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/rr-1.2.6/sc-2.0.1/sl-1.3.1/datatables.css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4-4.1.1/jq-3.3.1/jszip-2.5.0/dt-1.10.20/af-2.3.4/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/fc-3.3.0/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/rr-1.2.6/sc-2.0.1/sl-1.3.1/datatables.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3191810708057620"
+     crossorigin="anonymous"></script>
+    
+    <!-- <link rel="stylesheet" href="http://cdn.datatables.net/colvis/1.1.1/css/dataTables.colVis.css"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
+    
+    <!-- <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script> -->
+<style>
+    body{
+        padding: 10px;
+        text-align: center;
+        /* align-items:center; */
+    }
+    th, td { white-space: nowrap; }
+    div.dataTables_wrapper {
+        width: 1300px;
+        margin: 0 auto;
+        text-align: center;
+    }
+    .dataTables_filter{
+        padding: 5px 0;
+    position:absolute;
+    float: left;
+    
+    }
+    .dataTables_info{
+    /* position: relative; */
+    text-align: center;    
+    }
+    .dt-buttons{
+        padding: 5px 0;
+    }
+    .dataTables_paginate {
+    /* position: relative; */
+    float: right;
+}
+</style>
+</head>
+<body>
+    <button id="addRow" style="display:none;">Add new row</button><input id="i_file" accept=".xml" type="file" multiple
+        style="display:none;">
+    <div style="margin:2px;text-align:center;border:1px solid red;padding:5px;width: 1312px;display: inline-table;">
+        <h3 style="color:bisque">Zirve > Genel Muhasebe > Fatura Excel için uygun</h3>
+    
+    
+    <div style="border:1px solid red;padding:5px;width: 1302px;display: inline-table;">
+    <table id="bilanco" style="width:100%;">
+        <thead>
+            <tr>
+                <th class="nosort">Kod</th>
+                <th class="nosort">Tarih</th>
+                <th class="nosort">Belge No</th>
+                <th class="nosort">Satıcı KimlikNo</th>
+                <th class="nosort">Satıcı Unvanı</th>
+                <th class="nosort">Alıcı KimlikNo</th>
+                <th class="nosort">Alıcı Unvanı</th>
+                <th class="nosort">Vergisiz 00</th>
+                <th class="nosort">Vergisiz 01</th>
+                <th class="nosort">Kdv 01</th>
+                <th class="nosort">Vergisiz 08</th>
+                <th class="nosort">Kdv 08</th>
+                <th class="nosort">Vergisiz 10</th>
+                <th class="nosort">Kdv 10</th>
+                <th class="nosort">Vergisiz 18</th>
+                <th class="nosort">Kdv 18</th>
+                <th class="nosort">Vergisiz 20</th>
+                <th class="nosort">Kdv 20</th>
+                <th class="nosort">Fatura Toplamı</th>
+                <th class="nosort">Cari Kod</th>
+                <th class="nosort">Fatura Tipi</th>
+                <th class="nosort">ETTN</th>
+                <th class="nosort">DövizCinsi</th>
+                <th class="nosort">DövizTutarı</th>
+                <th class="nosort">Açıklama</th>
+                <th class="nosort">Dosya Adı</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table></div></div>
+    <br>
+    <br>
+    <div style="margin:2px;text-align:center;border:1px solid red;padding:5px;width: 1312px;display: inline-table;">
+        <h3 style="color:bisque">Zirve > İşletme Defteri > Ctrl+Shift+X için uygun</h3>
+        <p></p>
+        <div style="text-align:center;border:1px solid red;padding:5px;width: 1302px;display: inline-table;">
+    <table id="isletme" style="width:100%;">
+        <thead>
+            <tr>
+                <th class="nosort">Kod</th>
+                <th class="nosort">Hesap Kodu</th>
+                <th class="nosort">Tarih</th>
+                <th class="nosort">Belge No</th>
+                <th class="nosort">Satıcı KimlikNo</th>
+                <th class="nosort">Satıcı Unvanı</th>
+                <th class="nosort">Alıcı KimlikNo</th>
+                <th class="nosort">Alıcı Unvanı</th>
+                <th class="nosort">Vergisiz</th>
+                <th class="nosort">Kdv %</th>
+                <th class="nosort">Vergi</th>
+                <th class="nosort">Açıklama</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table></div></div>
+    <!-- Sayaclar.com Code Start  -->
+    <!--<div align="center"><script language="Javascript" src="https://sa.sayaclar.com/c/s4.php?a=tphgqq8&s=1a4"></script></div>-->
+    <!-- Sayaclar.com Code End -->
+    <script>
+        $(document).ready(function () {
+                var counter = 1;
+                $('#addRow').on('click', function () {
+                    $('#bilanco').DataTable().row.add([
+                        counter + '.1',counter + '.2',counter + '.3',counter + '.4',counter + '.5',counter + '.5',counter + '.5',
+                        counter + '.5',counter + '.5',counter + '.5',counter + '.5',counter + '.5',counter + '.5',]).draw(true);counter++;});
+                // sütun eksik olursa devamlı uyarı verir... Boş olsa bile sütun
+                // Automatically add a first row of data
+                // $('#addRow').click();
+            });
+    </script>
+    <script src="index.js"></script>
+
+    <style>
+        .textright{
+            text-align: right;
+        }
+    </style>
+     <link rel="stylesheet" type="text/css" href="tables.css" />
+</body>
+</html>
