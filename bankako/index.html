@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garanti ve Ziraat Bankası için Komisyon İşlemleri</title>
+    <link rel="stylesheet" href="light-bootstrap-gradient.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script src="FileSaver.js"></script>
+    <script src="xlsx.full.min.js"></script>
+    <script src="bankalar.js"></script>
+    <link rel="stylesheet" href="table.css">
+    <link rel="stylesheet" href="tabMenu.css">
+    <script src="table.js"></script>
+    <style>
+        .sui-grid-core .sui-cell {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="example-content">
+        <div id="tabsContainer">
+            <div id="tabsDiv" class="sui-tabs sui-tabs-top" role="tablist" tabindex="0">
+                <ul class="sui-tabs-tablist">
+                    <li id="shielddw" role="tab" data-index="#bilgilendirme" class="sui-tabs-tab-active">Bilgilendirme
+                    </li>
+                    <li id="shielddx" role="tab" data-index="#exceldosyasi" class="">Excel Dosyası Seçin</li>
+                    <li id="shielddy" role="tab" data-index="#tabTablo" class="">Yeni Excel</li>
+                    <!-- <li id="shielddz" role="tab" data-index="4" class="">Earth</li> -->
+                </ul>
+                <div style="display: block;" class="sui-tabs-item" role="tabpanel" aria-describedby="shielddw"
+                    id="bilgilendirme">
+                    <div>
+                        <span>
+                            Garanti Bankası ve Ziraat Bankası Excel dosyasının okunabilmesi için üst bilgilerin silinmesi
+                            gerekmektedir.
+                        </span><br>
+                        <ul>
+                            <li>
+                                <span>
+                                    Garanti Bankasına ait Excel'in sayfa yapısı aşağıdaki görsel gibi olmalıdır.
+                                </span>
+                                
+                                <img src="garantipos.jpg" style="width: 100%;" alt="">
+
+                            </li>
+                            <li>
+                                <p>
+                                    <span>
+                                        Ziraat Bankasına ait Excel'in sayfa yapısı aşağıdaki görsel gibi olmalıdır.
+                                        <br><span style="color: red"><strong>!!!!</strong> Tarih <strong>yeniden eskiye</strong> ise ek sütun kullanarak satır numarası verin ve satır numarasını tersine sıralarsanız işlem sırası ve bakiye kontrolünde sorun yaşanmayacaktır.</span>
+                                    </span>
+                                    <img src="ziraatpos.jpg" style="width: 100%;" alt="">
+                                </p>
+
+                            </li>
+                            <li>
+                                <p>
+                                    <span style="color:red">
+                                        <strong>
+                                            <strong>!!!!</strong> İşlemlerden sonra ek sütun kullanarak bakiye kontrolü yapmayı unutmayınız.
+                                            Son satır bakiyesi eşit ise komisyon ayırma işlemi başarılıdır.
+                                        </strong>
+                                    </span>
+                                </p>
+                            </li>
+                        </ul>
+                        
+                    </div>
+                </div>
+                <div style="display: none;" class="sui-tabs-item" role="tabpanel" aria-describedby="shielddx"
+                    id="exceldosyasi">
+
+                    <select name="" id="bankSelect">
+                        <option value="0">Banka Seçiniz</option>
+                        <option value="garanti">Garanti Bankası</option>
+                        <option value="ziraat">Ziraat Bankası</option>
+                    </select>
+                    <input type="file" id="excel-in" style="display:none">
+                </div>
+                <div style="display: none;" class="sui-tabs-item" role="tabpanel" aria-describedby="shielddy"
+                    id="tabTablo">
+                    <div class="buttons">
+                        <input type="button" class="sui-button" id="excel-out" value="Excel'e Kaydet">
+                        <!--<input type="button" class="sui-button" value="htmlTablo" id="htmlTablo">-->
+                    </div>
+                    <div id="tablo" style="height: 500px; /* width: 947px */"></div>
+                </div>
+            </div>
+        </div>
+        <div class="groups" style="display:none">
+
+            <!-- <div class="insertData">
+                <form id="insertData">
+                    <div class="row1">
+                        <input type="file" id="garantiPos" value="Garanti Bankası Excel Dosyası">
+                        <input type="button" id="postParasutCekler" value="Çek Listesini Veri Tabanına Kaydet">
+                    </div>
+                </form>
+            </div> -->
+            <div class="search">
+                <input type="text" title="Boşluk bırakarak birleşik sütunları arayabilirsiniz!">
+            </div>
+        </div>
+
+    </div>
+</body>
+<script>
+    let htmlTablo = $("#tablo").tablo({
+        height: "400px",
+        // api: {
+        //     url: "../api/garantipos.js",
+        //     method: "get",
+        //     dataType: "json"
+        // },
+        aggregate: {
+            show: false,
+            showTrue: [
+                { field: "heskod", aggregate: "count" },
+                { field: "evraktarihi", aggregate: "average" },
+                { field: "faturano", aggregate: "average" },
+                { field: "vergino", aggregate: "average" },
+                { field: "borc", aggregate: "average" },
+                { field: "alacak", aggregate: "sum" }
+            ]
+        },
+        scrooling: true,
+        columns: [
+            {
+                title: "Satır No",
+                field: "Satır No",
+                width: "80px",
+                type: "number"
+            },
+            {
+                title: "Tarih",
+                field: "Tarih",
+                width: "80px",
+                type: "date",
+                format: {
+                    convert: [ "dmy", "dmy" ],
+                    separate: [ "/", "." ]
+                }
+            },
+            {
+                title: "Açıklama",
+                field: "Açıklama",
+                width: "300px",
+                type: "text"
+            },
+            {
+                title: "Etiket",
+                field: "Etiket",
+                width: "125px",
+                type: "text"
+            },
+            {
+                title: "Tutar",
+                field: "Tutar",
+                width: "100px",
+                type: "floatTR"
+            },
+            {
+                title: "Bakiye",
+                field: "Bakiye",
+                width: "100px",
+                type: "floatTR"
+            },
+            {
+                title: "Yeni Bakiye",
+                field: "Yeni Bakiye",
+                width: "100px",
+                type: "floatTR"
+            }
+        ],
+        data: [
+
+        ]
+    })
+    let bankType = {}
+    $("#bankSelect").on("change", function () {
+        if($(this).val() == "0") {
+            $("#excel-in").hide()
+        } else {
+            $("#excel-in").show()
+        }
+    })
+
+    $("#excel-in").on("change", function (e) {
+        switch ($("#bankSelect").val()) {
+            case "garanti":
+                bankalar().garanti(e.target.files[0])
+                bankType = {
+                    excelFileName: "Garanti Bankası",
+                    pageName: "Hesap Hareketleri"
+                }
+                break;
+            case "ziraat":
+                bankalar().ziraat(e.target.files[0])
+                bankType = {
+                    excelFileName: "Ziraat Bankası",
+                    pageName:"Hesap Hareketleri"
+                }
+                break;
+        
+            default:
+                break;
+        }
+
+        $("#tabsContainer > #tabsDiv > ul > li").removeClass("sui-tabs-tab-active")
+        $("#tabsContainer > #tabsDiv > ul").find("li[data-index='#tabTablo']").addClass("sui-tabs-tab-active")
+        $("#tabsContainer > #tabsDiv > div").hide();
+        $("#tabTablo").show();
+
+        
+    })
+    $("#excel-out").on("click", function () {
+        var wsJson = XLSX.utils.json_to_sheet(htmlTablo.data);
+
+        /* add to workbook */
+        var wbJson = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wbJson, wsJson, bankType.pageName);
+
+        /* write workbook (use type 'binary') */
+        var wboutJson = XLSX.write(wbJson, { bookType: 'xlsx', type: 'binary' });
+
+        // var wb = XLSX.utils.table_to_book(document.getElementById('tableToExcel'), { sheet: "Sheet JS" });
+        // var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i < s.length; i++) view[ i ] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+        saveAs(new Blob([ s2ab(wboutJson) ], { type: "application/octet-stream" }), bankType.excelFileName + '.xlsx');
+
+
+    })
+
+</script>
+
+<script>
+    $("#tabsContainer > #tabsDiv > ul li").on("click", function () {
+        $("#tabsContainer > #tabsDiv > ul > li").removeClass("sui-tabs-tab-active")
+        $(this).addClass("sui-tabs-tab-active");
+        let toConsole = $(this).attr("data-index");
+        // $("")
+        $("#tabsContainer > #tabsDiv > div").hide();
+        $(toConsole).show();
+    })
+</script>
+<script>
+    $("#htmlTablo").on("click", function() {
+        htmlTablo.columns = [
+            {
+                title: "Satır No",
+                field: "Satır No",
+                width: "80px",
+                type: "number"
+            },
+            {
+                title: "Tarih",
+                field: "Tarih",
+                width: "80px",
+                type: "date",
+                format: {
+                    convert: [ "dmy", "dmy" ],
+                    separate: [ "/", "." ]
+                }
+            },
+            {
+                title: "Açıklama",
+                field: "Açıklama",
+                width: "300px",
+                type: "text"
+            },
+            {
+                title: "Etiket",
+                field: "Etiket",
+                width: "125px",
+                type: "text"
+            },
+            {
+                title: "Tutar",
+                field: "Tutar",
+                width: "100px",
+                type: "floatTR"
+            },
+            {
+                title: "Eski Bakiye",
+                field: "Bakiye",
+                width: "100px",
+                type: "floatTR"
+            },
+            {
+                title: "Yeni Bakiye",
+                field: "Yeni Bakiye",
+                width: "100px",
+                type: "floatTR"
+            }
+        ]
+        htmlTablo.newTable(true)
+    })
+</script>
+</html>
